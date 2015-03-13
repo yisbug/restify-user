@@ -1016,6 +1016,7 @@ body .markdown-body
 }
 </style><title>README</title></head><body><article class="markdown-body"><h1 id="restify-user"><a name="user-content-restify-user" href="#restify-user" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>restify-user</h1>
 <p>一个通用的用户模块，基于<code>restify</code>,<code>mongoose</code>。</p>
+<p>每次新建项目都要加用户模块，干脆把这一部分剥离出来，以后用起来方便。</p>
 <h3 id="_1"><a name="user-content-_1" href="#_1" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>安装</h3>
 <pre><code>npm install restify-user
 </code></pre>
@@ -1036,6 +1037,74 @@ db.once 'open',-&gt;
 <li><code>db</code>：<code>mongoose</code>数据库连接对象</li>
 <li><code>options</code>：其他参数,<code>object</code>类型</li>
 </ul>
+<p><code>options</code>参数支持字段：</p>
+<ul>
+<li><code>endpoint</code> 路由地址，默认为<code>/user</code></li>
+<li><code>fields</code> 用户表其他扩展字段，使用<code>mongoose</code>中<code>Schema</code>所支持的格式。</li>
+<li><code>model</code> 用户<code>collection</code>名称，默认为<code>admin</code></li>
+</ul>
+<p>目前还没实现的参数：</p>
+<ul>
+<li><code>usernameMinLen</code> 用户名最小长度，默认为1</li>
+<li><code>usernameMaxLen</code> 用户名最大长度，默认不做限制</li>
+<li><code>passwordMinLen</code> 密码最小长度，默认为1</li>
+<li><code>passwordMaxLen</code> 密码最大长度，默认不做限制</li>
+</ul>
 <p>之后会自动创建<code>/user</code>路由，支持<code>restify</code>的<code>post/get/del/put</code>等请求。其中<code>/user</code>可在<code>options</code>的<code>entpoint</code>属性中重新定义。</p>
 <h3 id="_3"><a name="user-content-_3" href="#_3" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>路由</h3>
-<h4 id="post-user"><code>POST /user</code> 创建用户</h4></article></body></html>
+<h4 id="post-user"><code>POST /user</code> 创建用户</h4>
+<p>参数：</p>
+<ul>
+<li><code>username</code> 登陆用户名</li>
+<li><code>nickname</code> 昵称</li>
+<li><code>password</code> 密码</li>
+<li>其他自定义字段，由<code>options</code>中<code>fields</code>字段配置。</li>
+</ul>
+<p>返回：</p>
+<ul>
+<li><code>200</code> 创建成功，返回创建的用户数据。</li>
+<li>其他失败</li>
+</ul>
+<h4 id="get-user"><code>GET /user</code> 获取用户列表</h4>
+<p>参数使用queryString</p>
+<ul>
+<li><code>limit</code> 每页条数，默认不分页</li>
+<li><code>page</code> 页码</li>
+</ul>
+<p>返回<code>object</code>对象，属性：</p>
+<ul>
+<li><code>count</code> 用户总数</li>
+<li><code>list</code> 用户列表</li>
+<li><code>page</code> 当前页码</li>
+</ul>
+<h4 id="put-useruserid"><code>PUT /user/:userid</code> 修改用户基本信息</h4>
+<h4 id="del-useruserid"><code>DEL /user/:userid</code> 删除用户</h4>
+<h4 id="get-useruserid"><code>GET /user/:userid</code> 获取用户详细信息</h4>
+<p>参数使用queryString</p>
+<ul>
+<li><code>type</code> 查询方式，支持<code>username</code>,<code>userid</code>，默认为<code>userid</code>。</li>
+</ul>
+<h4 id="get-usermy"><code>GET /user/my</code> 获取当前已登陆账户信息</h4>
+<h4 id="post-userlogin"><code>POST /user/login</code> 用户登陆</h4>
+<p>参数：</p>
+<ul>
+<li><code>username</code></li>
+<li><code>password</code></li>
+<li><code>grant_type</code>  password</li>
+</ul>
+<p>需要设置base token</p>
+<p>如果成功则返回<code>200</code>,和<code>access_token</code>，其他状态为登陆失败。</p>
+<ul>
+<li><code>access_token</code> object，包括：<code>token</code>,<code>username</code>,<code>userid</code>,<code>nickname</code>字段</li>
+<li><code>token_type</code></li>
+</ul>
+<h3 id="_4"><a name="user-content-_4" href="#_4" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>测试</h3>
+<blockquote>
+<p>所有测试均使用<code>coffeescript</code>编写。</p>
+</blockquote>
+<h4 id="_5"><a name="user-content-_5" href="#_5" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>运行单个测试</h4>
+<pre><code>grunt test:[filename]
+</code></pre>
+<blockquote>
+<p>运行单个测试可以不加<code>test/</code>路径前缀和<code>.coffee</code>后缀。</p>
+</blockquote></article></body></html>
