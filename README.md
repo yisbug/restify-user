@@ -20,10 +20,16 @@ restify = require 'restify'
 mongoose = require 'mongoose'
 userCenter = require 'restify-user'
 
+server = restify.createServer {}
+server.use restify.authorizationParser()
+server.use restify.bodyParser mapParams:false
+server.use restify.queryParser()
+
 db = mongoose.createConnection 'mongodb://localhost/test'
 db.once 'open',->
-    server = restify.createServer()
     userCenter server,db,options
+    sever.listen 8080,->
+        console.log '%s listening at %s',server.name,server.url
 ```
 
 `userCenter`接收3个参数，分别为：
@@ -31,6 +37,9 @@ db.once 'open',->
 * `server`： 即`restify`创建的`server`实例。
 * `db`：`mongoose`数据库连接对象
 * `options`：其他参数,`object`类型
+
+> 注：`server`需要使用`bodyParser`等中间件
+
 
 `options`参数支持字段：
 
