@@ -7,10 +7,11 @@ hashPassword = (password)->
     sha256sum.update password,'utf-8'
     sha256sum.digest 'hex'
 module.exports = (server,db,options={})->
-    defaultOpts = 
+
+    defaultOpts =
         endpoint:'/user' # 路由
         fields:{} # 其他自定义字段
-        usernameMinLen:1 
+        usernameMinLen:1
         usernameMaxLen:100
         passwordMinLen:1
         passwordMaxLen:100
@@ -35,7 +36,7 @@ module.exports = (server,db,options={})->
     # 添加默认账户
     User.count (err,count)->
         return if count > 0
-        user = new User 
+        user = new User
             username:defaultOpts.username
             password:hashPassword defaultOpts.password
             createAt:Date.now()

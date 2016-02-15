@@ -1,0 +1,5 @@
+coffee/
+.travis.yml
+.gitignore
+Gruntfile.coffee
+test/

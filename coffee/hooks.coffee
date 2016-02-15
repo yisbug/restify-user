@@ -1,8 +1,8 @@
-# oauth2
+oauth2=require 'restify-oauth2'
 
 crypto = require 'crypto'
 # 客户端secret
-clients = 
+clients =
     androidClient:
         secret:'Neptune'
     iosClient:
@@ -22,7 +22,7 @@ generateToken = (data)->
     sha256.update(data).digest 'base64'
 
 module.exports = (server,User,Token,endpoint)->
-    require('restify-oauth2').ropc server,
+    oauth2.ropc server,
         tokenEndpoint:endpoint
         hooks:
             # 验证客户端的方法
@@ -33,10 +33,19 @@ module.exports = (server,User,Token,endpoint)->
             grantUserToken:(client,req,callback)->
                 username = client.username
                 password = client.password
+                tusername = typeof username
+                tpassword = typeof password
+                !~['string','number'].indexOf(tusername) and callback null,false
+                !~['string','number'].indexOf(tpassword) and callback null,false
+
+                # typeof username isnt 'string' and callback null,false#'error'
+                # typeof password isnt 'string' or and callback null,false
+                # console.log username,password,123
                 User.findOne
                     username:username
                     password:hashPassword password
                 .exec (err,user)->
+                    # console.log err,user,333
                     return callback null,false if err or not user
                     tokenStr = generateToken username+':'+password
                     token = new Token

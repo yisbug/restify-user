@@ -2,7 +2,7 @@ restify = require 'restify'
 mongoose = require 'mongoose'
 assert = require 'assert'
 should = require 'should'
-
+UserCenter = require '../coffee/index'
 port = 8002
 
 describe '测试服务',->
@@ -39,11 +39,28 @@ describe '测试服务',->
         client.headers.authorization = userToken_type + ' ' + userToken
 
     userList = ''
-
+    server = ''
+    db = ''
     before (done)->
-        done()
+        server = restify.createServer {}
+        server.use restify.authorizationParser()
+        server.use restify.bodyParser mapParams:false
+        server.use restify.queryParser()
+        db = mongoose.createConnection 'mongodb://localhost/restify-user-test'
+        port = 8002
+        db.once 'open',->
+            UserCenter server,db,{
+                endpoint:'/admin'
+                model:'admin'
+            }
+            server.listen port,->
+                console.log 'server start on test mode.'
+                done()
     after (done)->
+        server.close()
+        db.close()
         done()
+
 
     describe '默认账户测试',->
         it '未授权获取账户信息',(done)->
@@ -62,6 +79,24 @@ describe '测试服务',->
                 adminToken = obj.access_token.token
                 adminUserid = obj.access_token.userid
                 adminToken_type = obj.token_type
+                done()
+        it '注入用户名',(done)->
+            client.headers.authorization = base_token
+            client.post endpoint+'/login',
+                username:{$ne:'123'}
+                password:adminPassword
+                grant_type:'password'
+            ,(err,req,res,obj)->
+                assert.ifError not err
+                done()
+        it '注入密码',(done)->
+            client.headers.authorization = base_token
+            client.post endpoint+'/login',
+                username:adminUsername
+                password:{$ne:'123'}
+                grant_type:'password'
+            ,(err,req,res,obj)->
+                assert.ifError not err
                 done()
         it '使用username获取账户信息',(done)->
             userAdmin()
