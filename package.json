@@ -1,6 +1,6 @@
 {
   "name": "restify-user",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "一个通用的用户模块",
   "main": "index.js",
   "scripts": {
