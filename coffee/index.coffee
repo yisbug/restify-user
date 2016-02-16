@@ -1,4 +1,3 @@
-restify = require 'restify'
 mongoose = require 'mongoose'
 crypto = require 'crypto'
 # 加密密码字符串
