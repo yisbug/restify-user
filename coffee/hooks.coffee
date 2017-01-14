@@ -35,17 +35,16 @@ module.exports = (server,User,Token,endpoint)->
                 password = client.password
                 tusername = typeof username
                 tpassword = typeof password
-                !~['string','number'].indexOf(tusername) and callback null,false
-                !~['string','number'].indexOf(tpassword) and callback null,false
+
+                return callback null,false if !~['string','number'].indexOf(tusername) 
+                return callback null,false if !~['string','number'].indexOf(tpassword)
 
                 # typeof username isnt 'string' and callback null,false#'error'
                 # typeof password isnt 'string' or and callback null,false
-                # console.log username,password,123
                 User.findOne
                     username:username
                     password:hashPassword password
                 .exec (err,user)->
-                    # console.log err,user,333
                     return callback null,false if err or not user
                     tokenStr = generateToken username+':'+password
                     token = new Token

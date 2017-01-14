@@ -96,6 +96,7 @@ describe '测试服务',->
                 password:{$ne:'123'}
                 grant_type:'password'
             ,(err,req,res,obj)->
+                # console.log(err,obj)
                 assert.ifError not err
                 done()
         it '使用username获取账户信息',(done)->

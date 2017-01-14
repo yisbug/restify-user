@@ -1,5 +1,6 @@
 mongoose = require 'mongoose'
 crypto = require 'crypto'
+mongoose.Promise = global.Promise if global and global.Promise
 # 加密密码字符串
 hashPassword = (password)->
     sha256sum = crypto.createHash 'sha256'
